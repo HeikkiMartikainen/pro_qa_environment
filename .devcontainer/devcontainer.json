@@ -1,0 +1,16 @@
+{
+    "name": "Python QA Pro Environment",
+    "build": {
+        "dockerfile": "../Dockerfile"
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-python.vscode-pylance"
+            ]
+        }
+    },
+    // Command to run after the container is created
+    "postCreateCommand": "echo 'Container is ready!'"
+}

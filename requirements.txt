@@ -1,0 +1,6 @@
+pytest
+pytest-html
+pytest-playwright
+google-generativeai
+python-dotenv
+pydantic
