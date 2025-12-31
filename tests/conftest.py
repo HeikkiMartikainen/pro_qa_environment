@@ -39,11 +39,7 @@ def invalid_login_data_from_ai():
     }
 
     model = genai.GenerativeModel(
-        'gemini-1.5-flash', # Changed to 1.5 flash as 2.5 might not be available or was a typo in previous file?
-                            # Wait, the previous file said 'gemini-2.5-flash'.
-                            # I will stick to what was there or a known working one.
-                            # Actually, 1.5-flash is standard. 2.5 doesn't exist publicly yet AFAIK.
-                            # Let me check the read file again.
+        'gemini-2.5-flash',
         generation_config=generation_config
     )
 
