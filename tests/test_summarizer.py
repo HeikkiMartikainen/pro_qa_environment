@@ -55,7 +55,7 @@ def test_long_text_summary(ai_client):
     
     # Get the validation result from the AI
     response = ai_client.models.generate_content(
-        model='gemini-1.5-flash',
+        model='gemini-2.5-flash',
         contents=validation_prompt,
         config=types.GenerateContentConfig(
             response_mime_type="application/json",
