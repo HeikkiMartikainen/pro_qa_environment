@@ -2,7 +2,7 @@ pytest
 pytest-html
 playwright==1.57.0
 pytest-playwright
-google-generativeai
+google-genai
 python-dotenv
 pydantic
 ruff
