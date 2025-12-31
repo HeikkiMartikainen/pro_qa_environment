@@ -1,0 +1,26 @@
+name: Quality Checks
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  quality-checks:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright/python:v1.49.0-noble
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Ruff
+        run: ruff check .
+
+      - name: Run Pytest
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+        run: pytest -v

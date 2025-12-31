@@ -4,3 +4,4 @@ pytest-playwright
 google-generativeai
 python-dotenv
 pydantic
+ruff

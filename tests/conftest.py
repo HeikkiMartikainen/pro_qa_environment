@@ -11,7 +11,7 @@ from pathlib import Path
 root_dir = Path(__file__).parent.parent
 sys.path.append(str(root_dir))
 
-from models import CredentialList
+from models import CredentialList  # noqa: E402
 
 load_dotenv()
 
