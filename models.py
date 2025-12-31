@@ -5,7 +5,6 @@ class Credentials(BaseModel):
     """A set of user credentials with the expected error message."""
     username: str = Field(description="The username to test.")
     password: str = Field(description="The password to test.")
-    # Add this new field
     expected_error: str = Field(description="The exact error message the application should display.")
 
 class CredentialList(BaseModel):
