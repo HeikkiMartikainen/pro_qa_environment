@@ -1,5 +1,5 @@
 # Use Microsoft's official Playwright image which includes Python, Node, and browsers
-FROM mcr.microsoft.com/playwright/python:v1.55.0-jammy
+FROM mcr.microsoft.com/playwright/python:v1.57.0-noble
 
 # Set up a non-root user for security
 # ARG USERNAME=vscode
