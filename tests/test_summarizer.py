@@ -1,27 +1,31 @@
 import pytest
 import os
 import json
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 from dotenv import load_dotenv
 from utils.summarizer import summarize_text
+from pydantic import BaseModel
 
 # Load environment variables at the start of the test session
 load_dotenv()
 
 # Configure the AI model once for the entire test file
 API_KEY = os.getenv("GOOGLE_API_KEY")
-if API_KEY:
-    genai.configure(api_key=API_KEY)
-else:
+if not API_KEY:
     # Skip all tests in this file if the key is not available
     pytest.skip("GOOGLE_API_KEY not found, skipping AI tests", allow_module_level=True)
 
-@pytest.fixture(scope="module")
-def ai_model():
-    """A fixture to provide the initialized AI model to our tests."""
-    return genai.GenerativeModel('gemini-2.5-flash')
+class ValidationResult(BaseModel):
+    is_accurate: bool
+    reasoning: str
 
-def test_long_text_summary(ai_model):
+@pytest.fixture(scope="module")
+def ai_client():
+    """A fixture to provide the initialized AI client to our tests."""
+    return genai.Client(api_key=API_KEY)
+
+def test_long_text_summary(ai_client):
     """
     Tests the summarization of a long text about the planet Jupiter.
     """
@@ -48,17 +52,26 @@ def test_long_text_summary(ai_model):
     1. "is_accurate": a boolean (true or false).
     2. "reasoning": a brief explanation for your decision.
     """
-
-    # Tell the model to specifically output JSON
-    generation_config = {"response_mime_type": "application/json"}
     
     # Get the validation result from the AI
-    response = ai_model.generate_content(validation_prompt, generation_config=generation_config)
+    response = ai_client.models.generate_content(
+        model='gemini-2.5-flash',
+        contents=validation_prompt,
+        config=types.GenerateContentConfig(
+            response_mime_type="application/json",
+            response_schema=ValidationResult
+        )
+    )
     
     try:
-        validation_result = json.loads(response.text)
-        is_accurate = validation_result.get("is_accurate", False)
-        reasoning = validation_result.get("reasoning", "No reason provided.")
+        if response.parsed:
+            validation_result = response.parsed
+            is_accurate = validation_result.is_accurate
+            reasoning = validation_result.reasoning
+        else:
+             data = json.loads(response.text)
+             is_accurate = data.get("is_accurate", False)
+             reasoning = data.get("reasoning", "No reason provided.")
         
         print(f"AI Validation Result: {is_accurate}, Reason: {reasoning}")
         

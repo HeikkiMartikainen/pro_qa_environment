@@ -1,9 +1,9 @@
 import pytest
 import os
 import json
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 from dotenv import load_dotenv
-from google.generativeai.types import HarmCategory, HarmBlockThreshold
 import sys
 from pathlib import Path
 
@@ -30,18 +30,7 @@ def invalid_login_data_from_ai():
     if not api_key:
         pytest.skip("GOOGLE_API_KEY not found, skipping AI data generation.")
 
-    genai.configure(api_key=api_key)
-
-    # improved generation config with schema
-    generation_config = {
-        "response_mime_type": "application/json",
-        "response_schema": CredentialList
-    }
-
-    model = genai.GenerativeModel(
-        'gemini-2.5-flash',
-        generation_config=generation_config
-    )
+    client = genai.Client(api_key=api_key)
 
     prompt = """
     Generate a list of 5 invalid login credentials for testing the Sauce Demo website.
@@ -60,19 +49,44 @@ def invalid_login_data_from_ai():
     - Special characters
     """
 
-    safety_settings = {
-        HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-        HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-        HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
-        HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
-    }
+    safety_settings = [
+        types.SafetySetting(
+            category='HARM_CATEGORY_HARASSMENT',
+            threshold='BLOCK_NONE'
+        ),
+        types.SafetySetting(
+            category='HARM_CATEGORY_HATE_SPEECH',
+            threshold='BLOCK_NONE'
+        ),
+        types.SafetySetting(
+            category='HARM_CATEGORY_SEXUALLY_EXPLICIT',
+            threshold='BLOCK_NONE'
+        ),
+        types.SafetySetting(
+            category='HARM_CATEGORY_DANGEROUS_CONTENT',
+            threshold='BLOCK_NONE'
+        ),
+    ]
 
     for attempt in range(3):
         try:
-            response = model.generate_content(prompt, safety_settings=safety_settings)
+            response = client.models.generate_content(
+                model='gemini-2.5-flash',
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    response_mime_type='application/json',
+                    response_schema=CredentialList,
+                    safety_settings=safety_settings
+                )
+            )
+            # The new SDK parses the response into the schema object if provided
+            if response.parsed:
+                 return response.parsed.credentials
+
+            # Fallback if parsed is somehow missing but text is present (unlikely with SDK)
             data = json.loads(response.text)
-            # The schema ensures it matches CredentialList, but we parse it to be sure
             return CredentialList(**data).credentials
+
         except (json.JSONDecodeError, ValueError, Exception) as e:
             print(f"\nAttempt {attempt + 1} failed. Error: {e}")
 
