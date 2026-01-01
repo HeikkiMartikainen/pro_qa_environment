@@ -2,6 +2,8 @@ from playwright.sync_api import Page
 from pages.base_page import BasePage
 
 class TesterBudLoginPage(BasePage):
+    EXPECTED_TITLE = "Login Automation Practice Page"
+
     def __init__(self, page: Page):
         super().__init__(page)
         # Updated selector based on actual page HTML
