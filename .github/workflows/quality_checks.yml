@@ -15,7 +15,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          pip install -r requirements.txt
+          rfbrowser init
 
       - name: Run Ruff
         run: ruff check .
@@ -25,6 +27,9 @@ jobs:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         run: pytest -v
 
+      - name: Run Robot Framework Tests
+        run: robot -d robot_reports tests/robot/
+
       - name: Upload Artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -33,4 +38,5 @@ jobs:
           path: |
             playwright-report/
             screenshots/
+            robot_reports/
           retention-days: 30

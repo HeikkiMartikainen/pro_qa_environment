@@ -27,6 +27,7 @@ This project contains automated end-to-end tests for [Sauce Demo](https://www.sa
    ```bash
    pip install -r requirements.txt
    playwright install
+   rfbrowser init
    ```
 
 3. **Environment Setup:**
@@ -37,15 +38,19 @@ This project contains automated end-to-end tests for [Sauce Demo](https://www.sa
 
 ## Running Tests
 
-To run all tests:
+To run Playwright tests:
 ```bash
 pytest
 ```
 
-To run specific tests:
+To run Robot Framework tests:
 ```bash
-pytest tests/test_login.py
-pytest tests/test_summarizer.py
+robot tests/robot/
+```
+
+To run specific Playwright tests:
+```bash
+pytest tests/playwright/test_login.py
 ```
 
 To run tests with a head (visible browser):
@@ -71,8 +76,19 @@ You can also run the tests using Docker.
 ## Project Structure
 
 - `pages/`: Contains Page Object Models (e.g., `login_page.py`).
-- `tests/`: Contains test files (`test_login.py`, `test_summarizer.py`, etc.).
+- `tests/playwright/`: Contains Playwright test files (`test_login.py`, etc.).
+- `tests/robot/`: Contains Robot Framework tests and resources.
 - `utils/`: Utility scripts (e.g., `summarizer.py`).
 - `models.py`: Pydantic models for data validation.
 - `Dockerfile`: Configuration for Docker environment.
 - `requirements.txt`: Python dependencies.
+
+## Robot Framework vs. Playwright: A Comparative Study
+
+This project demonstrates the ability to choose the right tool for the client's specific needs by implementing a side-by-side comparison of Robot Framework and Playwright.
+
+| Feature | Robot Framework (Keyword-Driven) | Playwright (Code-Driven) |
+| :--- | :--- | :--- |
+| **Syntax** | High-level keywords (English-like). Accessible to non-programmers. | Python code. Requires programming knowledge but offers full flexibility. |
+| **Execution Speed** | Slightly slower due to keyword parsing and abstraction layers. | Faster. Direct communication with browser via WebSocket. |
+| **Ease of Maintenance** | Easier for simple flows. Complex logic can become messy if not well-structured. | Very maintainable with patterns like POM. Strong typing and linting help. |
