@@ -7,18 +7,27 @@ on:
 jobs:
   quality-checks:
     runs-on: ubuntu-latest
-    container:
-      image: mcr.microsoft.com/playwright/python:v1.57.0-noble
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
       - name: Install dependencies
         env:
           PIP_ROOT_USER_ACTION: ignore
         run: |
           pip install -r requirements.txt
+          playwright install
           rfbrowser init
 
       - name: Run Ruff
