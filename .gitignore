@@ -8,4 +8,4 @@ playwright-report/
 report.html
 screenshots/
 *.png
-robot_reports/
+results/
