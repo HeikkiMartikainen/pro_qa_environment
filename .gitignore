@@ -8,3 +8,4 @@ playwright-report/
 report.html
 screenshots/
 *.png
+results/
