@@ -1,0 +1,29 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Pytest",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "tests/playwright",
+                "--html=results/pytest/report.html",
+                "--self-contained-html",
+                "--junit-xml=results/pytest/junit.xml"
+            ],
+            "justMyCode": false
+        },
+        {
+            "name": "Robot",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "robot",
+            "args": [
+                "--outputdir=results",
+                "tests/robot"
+            ],
+            "justMyCode": false
+        }
+    ]
+}

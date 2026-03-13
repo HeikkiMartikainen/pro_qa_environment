@@ -1,23 +1,23 @@
-# Use Microsoft's official Playwright image which includes Python, Node, and browsers
-FROM mcr.microsoft.com/playwright/python:v1.57.0-noble
+# Käytetään virallista Robot Framework Browser -kuvaa
+FROM marketsquare/robotframework-browser:19.12.5
 
-# Set up a non-root user for security
-# ARG USERNAME=vscode
-# ARG USER_UID=1000
-# ARG USER_GID=$USER_UID
-# RUN groupadd --gid $USER_GID $USERNAME && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME
-# USER $USERNAME
+ENV PYTHONDONTWRITEBYTECODE=1
 
-# # Install Appium and its dependencies
-# # We switch back to root temporarily to install system-level packages
-# USER root
-# RUN apt-get update && apt-get install -y nodejs npm
-# RUN npm install -g appium
-# USER $USERNAME
+# Vaihdetaan root-käyttäjään oikeuksien korjaamista ja asennuksia varten
+USER root
 
-# Copy your project requirements file into the container
-COPY requirements.txt .
+# 1. Poistetaan ubuntu-käyttäjä, jotta UID 1000 vapautuu
+RUN userdel -r ubuntu || true \
+    && userdel -r node || true
 
-# Install Python packages
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+# 2. PAKOTETAAN pwuser käyttämään WSL:n kanssa täsmäävää UID/GID 1000 -tunnusta
+RUN usermod -u 1000 pwuser && groupmod -g 1000 pwuser
+
+# 3. Kopioidaan ja asennetaan riippuvuudet väliaikaiskansion kautta
+# (Näin vältämme turhan tiedoston roikkumisen varsinaisessa työkansiossa)
+COPY requirements.txt /tmp/
+RUN pip install --upgrade pip \
+    && pip install -r /tmp/requirements.txt
+
+# Vaihdetaan lopuksi takaisin turvalliseen pwuser-käyttäjään
+USER pwuser
