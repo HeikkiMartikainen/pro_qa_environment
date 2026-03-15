@@ -2,7 +2,6 @@ __pycache__/
 *.pyc
 .env
 .pytest_cache/
-.vscode/
 test-results/
 playwright-report/
 report.html
