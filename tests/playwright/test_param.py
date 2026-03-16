@@ -5,7 +5,7 @@ import pytest
     ("user2", "wrong", "failure"),
     ("", "", "failure"),
 ])
-def test_login(username, password, expected_result):
+def test_login(username: str, password: str, expected_result: str):
     # In a real test, you'd call your application's login function
     # For now, we'll just simulate it
     print(f"Testing {username}/{password}, expecting {expected_result}")

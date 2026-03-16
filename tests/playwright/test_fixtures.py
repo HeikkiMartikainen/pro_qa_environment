@@ -4,7 +4,8 @@ import pytest
 def sample_data():
     # This could be setting up a database connection,
     # launching a browser, or just creating data.
-    return {"user": "Heikki", "role": "admin"}
+    return {"user": "Dean", "role": "admin"}
 
-def test_username(sample_data):
-    assert sample_data["user"] == "Heikki"
+def test_fixtures(sample_data: dict[str, str]) -> None:
+    assert sample_data["user"] == "Dean"
+    assert sample_data["role"] == "admin"

@@ -25,7 +25,7 @@ def ai_client():
     """A fixture to provide the initialized AI client to our tests."""
     return genai.Client(api_key=API_KEY)
 
-def test_long_text_summary(ai_client):
+def test_long_text_summary(ai_client: genai.Client):
     """
     Tests the summarization of a long text about the planet Jupiter.
     """
@@ -54,7 +54,7 @@ def test_long_text_summary(ai_client):
     """
     
     # Get the validation result from the AI
-    response = ai_client.models.generate_content(
+    response = ai_client.models.generate_content(  # type: ignore
         model='gemini-2.5-flash',
         contents=validation_prompt,
         config=types.GenerateContentConfig(
@@ -65,13 +65,16 @@ def test_long_text_summary(ai_client):
     
     try:
         if response.parsed:
-            validation_result = response.parsed
+            validation_result: ValidationResult = response.parsed  # type: ignore
             is_accurate = validation_result.is_accurate
             reasoning = validation_result.reasoning
         else:
-             data = json.loads(response.text)
-             is_accurate = data.get("is_accurate", False)
-             reasoning = data.get("reasoning", "No reason provided.")
+             if response.text:
+                 data = json.loads(response.text)
+                 is_accurate = data.get("is_accurate", False)
+                 reasoning = data.get("reasoning", "No reason provided.")
+             else:
+                 pytest.fail("AI response text is empty or None")
         
         print(f"AI Validation Result: {is_accurate}, Reason: {reasoning}")
         

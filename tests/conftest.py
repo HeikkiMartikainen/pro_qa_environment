@@ -1,6 +1,7 @@
 import pytest
 import os
 import json
+from typing import cast
 from google import genai
 from google.genai import types
 from dotenv import load_dotenv
@@ -51,26 +52,26 @@ def invalid_login_data_from_ai():
 
     safety_settings = [
         types.SafetySetting(
-            category='HARM_CATEGORY_HARASSMENT',
-            threshold='BLOCK_NONE'
+            category=types.HarmCategory.HARM_CATEGORY_HARASSMENT,
+            threshold=types.HarmBlockThreshold.BLOCK_NONE
         ),
         types.SafetySetting(
-            category='HARM_CATEGORY_HATE_SPEECH',
-            threshold='BLOCK_NONE'
+            category=types.HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+            threshold=types.HarmBlockThreshold.BLOCK_NONE
         ),
         types.SafetySetting(
-            category='HARM_CATEGORY_SEXUALLY_EXPLICIT',
-            threshold='BLOCK_NONE'
+            category=types.HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+            threshold=types.HarmBlockThreshold.BLOCK_NONE
         ),
         types.SafetySetting(
-            category='HARM_CATEGORY_DANGEROUS_CONTENT',
-            threshold='BLOCK_NONE'
+            category=types.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+            threshold=types.HarmBlockThreshold.BLOCK_NONE
         ),
     ]
 
     for attempt in range(3):
         try:
-            response = client.models.generate_content(
+            response = client.models.generate_content(  # type: ignore
                 model='gemini-2.5-flash',
                 contents=prompt,
                 config=types.GenerateContentConfig(
@@ -81,11 +82,13 @@ def invalid_login_data_from_ai():
             )
             # The new SDK parses the response into the schema object if provided
             if response.parsed:
-                 return response.parsed.credentials
+                 parsed_creds = cast(CredentialList, response.parsed)
+                 return parsed_creds.credentials
 
             # Fallback if parsed is somehow missing but text is present (unlikely with SDK)
-            data = json.loads(response.text)
-            return CredentialList(**data).credentials
+            if response.text:
+                data = json.loads(response.text)
+                return CredentialList(**data).credentials
 
         except (json.JSONDecodeError, ValueError, Exception) as e:
             print(f"\nAttempt {attempt + 1} failed. Error: {e}")
