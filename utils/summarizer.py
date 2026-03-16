@@ -23,12 +23,12 @@ def summarize_text(text_to_summarize: str) -> str:
 
         # Use the client to generate content
         # model='gemini-1.5-flash' as requested to fix quotas
-        response = client.models.generate_content(
+        response = client.models.generate_content(  # type: ignore
             model='gemini-2.5-flash',
             contents=f"Summarize the following text in one sentence: '{text_to_summarize}'"
         )
         
-        return response.text.strip()
+        return response.text.strip() if response.text else ""
     except Exception as e:
         # This will catch errors if the API key was missing or invalid
         print(f"An error occurred during summarization: {e}")

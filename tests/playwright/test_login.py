@@ -1,13 +1,15 @@
+from typing import List
 from playwright.sync_api import Page, expect
 from pages.login_page import LoginPage
 from dotenv import load_dotenv
+from models import Credentials
 
 # Load environment variables from the .env file
 load_dotenv()
 
 # --- Test Functions ---
 
-def test_successful_login(page: Page, base_url):
+def test_successful_login(page: Page, base_url: str):
     """
     Tests that a standard user can successfully log in.
     """
@@ -21,7 +23,7 @@ def test_successful_login(page: Page, base_url):
     expect(inventory_list).to_be_visible()
     expect(page).to_have_title("Swag Labs")
 
-def test_invalid_logins(page: Page, invalid_login_data_from_ai, base_url):
+def test_invalid_logins(page: Page, invalid_login_data_from_ai: List[Credentials], base_url: str):
     """
     Tests that the application handles various AI-generated invalid login attempts correctly.
     """

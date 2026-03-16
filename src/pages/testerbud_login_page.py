@@ -15,15 +15,14 @@ class TesterBudLoginPage(BasePage):
         self.success_message = page.get_by_text("Login Successful")
         self.back_to_login_button = page.get_by_text("Back to Login")
 
-    def navigate(self):
+    def navigate(self, url: str | None = None):
         """Navigates to the TesterBud login practice page."""
-        super().navigate(self.URL)
+        super().navigate(url or self.URL)
 
-    def login(self, username, password):
+    def login(self, username: str, password: str):
         """Fills in credentials and clicks login."""
         self.username_input.fill(username)
-        if password is not None:
-             self.password_input.fill(password)
+        self.password_input.fill(password)
         self.login_button.click()
 
     def get_error_message(self) -> str:
