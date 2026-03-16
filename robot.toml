@@ -1,0 +1,8 @@
+[tool.robocop.lint]
+ignore = [
+    "missing-doc-keyword",
+    "missing-doc-test-case"
+]
+configure = [
+    "line-too-long.line_lenght=120"
+]
