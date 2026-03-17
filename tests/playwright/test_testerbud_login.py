@@ -1,12 +1,7 @@
 import pytest
 from playwright.sync_api import Page, expect
 from src.pages.testerbud_login_page import TesterBudLoginPage as BudLoginPage
-
-# Constants for Test Data
-VALID_USER = "user@premiumbank.com"
-VALID_PASS = "Bank@123"
-INVALID_USER = "invalid@user.com"
-INVALID_PASS = "wrongpass"
+from config.variables import VALID_USERNAME, INVALID_USERNAME, VALID_PASSWORD, INVALID_PASSWORD
 
 @pytest.fixture
 def login_page(page: Page):
@@ -20,7 +15,9 @@ def test_tc_basic_01_verify_login_with_valid_credentials(login_page: BudLoginPag
     TC_Basic_01: Verify login with valid credentials
     Expected: User should see successful message 'Login Successful' and Button 'Back to Login'
     """
-    login_page.login(VALID_USER, VALID_PASS)
+    if not VALID_PASSWORD:
+        pytest.skip("VALID_PASS environment variable not set")
+    login_page.login(VALID_USERNAME, VALID_PASSWORD)
 
     expect(login_page.page.locator(".alert-success")).to_contain_text("Login Successful")
     # Note: The "Back to Login" button is not present in the current DOM state after login.
@@ -32,7 +29,9 @@ def test_tc_basic_02_verify_login_with_invalid_credentials(login_page: BudLoginP
     TC_Basic_02: Verify login with invalid credentials
     Expected: Error message 'Invalid email id and password' should be displayed
     """
-    login_page.login(INVALID_USER, INVALID_PASS)
+    if not INVALID_PASSWORD:
+        pytest.skip("INVALID_PASS environment variable not set")
+    login_page.login(INVALID_USERNAME, INVALID_PASSWORD)
     expect(login_page.page.get_by_text("Invalid email id and password")).to_be_visible()
 
 def test_tc_basic_03_check_ui_elements(login_page: BudLoginPage):
@@ -67,7 +66,7 @@ def test_tc_basic_06_verify_username_only_error(login_page: BudLoginPage):
     TC_Basic_06: Verify error message when username is entered but password field is left blanked
     Expected: Error message 'Password is required'
     """
-    login_page.login(VALID_USER, "")
+    login_page.login(VALID_USERNAME, "")
     expect(login_page.page.locator(".alert-danger")).to_contain_text("Password is required")
 
 def test_tc_basic_07_verify_invalid_email_format(login_page: BudLoginPage):

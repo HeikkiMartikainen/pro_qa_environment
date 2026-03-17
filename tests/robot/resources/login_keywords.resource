@@ -5,10 +5,7 @@ Library             Browser
 
 
 *** Variables ***
-${URL}                      https://testerbud.com/practice-login-form
 ${HEADLESS}                 True    # Override via VS Code RobotCode settings or --variable HEADLESS:False
-${VALID_USER}               user@premiumbank.com
-${VALID_PASS}               Bank@123
 ${USERNAME_SELECTOR}        css=#formBasicEmail
 ${PASSWORD_SELECTOR}        css=#formBasicPassword
 ${LOGIN_BTN_SELECTOR}       css=button[type='submit']
@@ -19,8 +16,9 @@ ${REGISTER_LINK_SELECTOR}           css=a[href='/register']
 
 *** Keywords ***
 Open Login Page
+    [Arguments]    ${url}
     New Browser    headless=${HEADLESS}
-    New Page    ${URL}
+    New Page    ${url}
     Get Title    contains    Login Automation Practice Page
 
 Enter Credentials

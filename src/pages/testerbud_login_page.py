@@ -1,9 +1,10 @@
 from playwright.sync_api import Page
 from pages.base_page import BasePage
+from config.variables import BASE_URL
 
 class TesterBudLoginPage(BasePage):
     EXPECTED_TITLE = "Login Automation Practice Page"
-    URL = "https://testerbud.com/practice-login-form"
+    URL = BASE_URL
 
     def __init__(self, page: Page):
         super().__init__(page)
