@@ -27,7 +27,7 @@ jobs:
           PIP_ROOT_USER_ACTION: ignore
         run: |
           pip install -r requirements.txt
-          playwright install
+          playwright install --with-deps
           rfbrowser init
 
       - name: Run Ruff
