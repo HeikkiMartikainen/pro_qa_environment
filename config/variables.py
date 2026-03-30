@@ -4,10 +4,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # config/variables.py
-BASE_URL = "https://testerbud.com/practice-login-form"
-VALID_USERNAME = "user@premiumbank.com"
-INVALID_USERNAME = "invalid@user.com"
 TIMEOUT_MS = 5000
 
-VALID_PASSWORD = os.getenv("VALID_PASS")
-INVALID_PASSWORD = os.getenv("INVALID_PASS")
+# Saucedemo credentials
+SAUCEDEMO_URL = "https://www.saucedemo.com/"
+SAUCEDEMO_STANDARD_USER = "standard_user"
+SAUCEDEMO_LOCKED_OUT_USER = "locked_out_user"
+SAUCEDEMO_PASSWORD = os.getenv("SAUCEDEMO_PASSWORD")
