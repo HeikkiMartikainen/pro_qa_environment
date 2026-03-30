@@ -39,14 +39,12 @@ jobs:
       - name: Run Pytest
         env:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
-          VALID_PASS: ${{ secrets.VALID_PASS }}
-          INVALID_PASS: ${{ secrets.INVALID_PASS }}
+          SAUCEDEMO_PASSWORD: ${{ secrets.SAUCEDEMO_PASSWORD }}
         run: pytest -v
 
       - name: Run Robot Framework Tests
         env:
-          VALID_PASS: ${{ secrets.VALID_PASS }}
-          INVALID_PASS: ${{ secrets.INVALID_PASS }}
+          SAUCEDEMO_PASSWORD: ${{ secrets.SAUCEDEMO_PASSWORD }}
         run: robot -d results tests/robot/
 
       - name: Upload Artifacts

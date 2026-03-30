@@ -1,8 +1,9 @@
 from playwright.sync_api import Page
 from pages.base_page import BasePage
 
-class LoginPage(BasePage):
+class SauceDemoLoginPage(BasePage):
     EXPECTED_TITLE = "Swag Labs"
+    URL = "https://www.saucedemo.com/"
 
     def __init__(self, page: Page):
         super().__init__(page)
@@ -11,9 +12,9 @@ class LoginPage(BasePage):
         self.login_button = page.locator('[data-test="login-button"]')
         self.error_message = page.locator('[data-test="error"]')
 
-    def navigate(self, url: str):
-        """Navigates to the login page."""
-        super().navigate(url)
+    def navigate(self, url: str | None = None):
+        """Navigates to the Sauce Demo login page."""
+        super().navigate(url or self.URL)
 
     def login(self, username: str, password: str):
         """Fills in credentials and clicks login."""

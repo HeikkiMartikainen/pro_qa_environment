@@ -38,6 +38,9 @@ def test_long_text_summary(ai_client: genai.Client):
     )
     
     function_summary = summarize_text(long_text)
+    if function_summary == "API_QUOTA_EXCEEDED":
+        pytest.skip("Skipping test due to API resource exhaustion during summarization.")
+    
     assert function_summary, "The summarizer function returned an empty string."
     print(f"\nFunction's Summary: {function_summary}")
 
@@ -53,17 +56,17 @@ def test_long_text_summary(ai_client: genai.Client):
     2. "reasoning": a brief explanation for your decision.
     """
     
-    # Get the validation result from the AI
-    response = ai_client.models.generate_content(  # type: ignore
-        model='gemini-2.5-flash',
-        contents=validation_prompt,
-        config=types.GenerateContentConfig(
-            response_mime_type="application/json",
-            response_schema=ValidationResult
-        )
-    )
-    
     try:
+        # Get the validation result from the AI
+        response = ai_client.models.generate_content(  # type: ignore
+            model='gemini-2.5-flash',
+            contents=validation_prompt,
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json",
+                response_schema=ValidationResult
+            )
+        )
+        
         if response.parsed:
             validation_result: ValidationResult = response.parsed  # type: ignore
             is_accurate = validation_result.is_accurate
@@ -80,5 +83,10 @@ def test_long_text_summary(ai_client: genai.Client):
         
         assert is_accurate, f"The AI determined the summary was not accurate. Reason: {reasoning}"
 
-    except (json.JSONDecodeError, AttributeError):
-        pytest.fail(f"Failed to parse AI validation response. Raw response: {response.text}")
+    except Exception as e:
+        error_str = str(e)
+        if "429" in error_str or "RESOURCE_EXHAUSTED" in error_str:
+            pytest.skip(f"Skipping test due to API resource exhaustion during validation: {e}")
+        
+        # Fail for other exceptions during parsing or AI call
+        pytest.fail(f"An unexpected error occurred: {e}")

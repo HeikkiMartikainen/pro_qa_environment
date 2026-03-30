@@ -1,3 +1,4 @@
+import logging
 import pytest
 import os
 import json
@@ -5,20 +6,17 @@ from typing import cast
 from google import genai
 from google.genai import types
 from dotenv import load_dotenv
-import sys
-from pathlib import Path
+from models import CredentialList
+from config.variables import SAUCEDEMO_URL
 
-# Ensure root directory is in python path to import models
-root_dir = Path(__file__).parent.parent
-sys.path.append(str(root_dir))
-
-from models import CredentialList  # noqa: E402
+logging.getLogger("httpx").setLevel(logging.WARNING)
+logging.getLogger("google_genai").setLevel(logging.WARNING)
 
 load_dotenv()
 
 @pytest.fixture(scope="session")
 def base_url():
-    return "https://www.saucedemo.com/"
+    return SAUCEDEMO_URL
 
 @pytest.fixture(scope="session")
 def invalid_login_data_from_ai():
@@ -46,7 +44,7 @@ def invalid_login_data_from_ai():
     - Empty username
     - Empty password
     - Invalid username/password combination
-    - Long strings
+    - Long strings (maximum 60 characters)
     - Special characters
     """
 
@@ -90,8 +88,11 @@ def invalid_login_data_from_ai():
                 data = json.loads(response.text)
                 return CredentialList(**data).credentials
 
-        except (json.JSONDecodeError, ValueError, Exception) as e:
-            print(f"\nAttempt {attempt + 1} failed. Error: {e}")
+        except Exception as e:
+            error_str = str(e)
+            if "429" in error_str or "RESOURCE_EXHAUSTED" in error_str:
+                pytest.skip(f"Skipping test due to API resource exhaustion: {e}")
+            logging.error(f"Attempt {attempt + 1} failed. Error: {e}")
 
     pytest.fail("Failed to generate valid test data from AI.")
     return []

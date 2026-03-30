@@ -1,3 +1,4 @@
+import logging
 from google import genai
 import os
 
@@ -30,6 +31,11 @@ def summarize_text(text_to_summarize: str) -> str:
         
         return response.text.strip() if response.text else ""
     except Exception as e:
-        # This will catch errors if the API key was missing or invalid
-        print(f"An error occurred during summarization: {e}")
+        error_str = str(e)
+        if "429" in error_str or "RESOURCE_EXHAUSTED" in error_str:
+            return "API_QUOTA_EXCEEDED"
+        
+        # This will catch other errors (e.g., invalid API key)
+        logging.error(f"An error occurred during summarization: {e}")
         return ""
+
