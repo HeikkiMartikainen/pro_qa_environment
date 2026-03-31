@@ -1,6 +1,6 @@
 from typing import List
 from playwright.sync_api import Page, expect
-from pages.login_page import LoginPage
+from src.pages.saucedemo_login_page import SauceDemoLoginPage
 from dotenv import load_dotenv
 from models import Credentials
 
@@ -13,7 +13,7 @@ def test_successful_login(page: Page, base_url: str):
     """
     Tests that a standard user can successfully log in.
     """
-    login_page = LoginPage(page)
+    login_page = SauceDemoLoginPage(page)
     # Pass the base_url from fixture
     login_page.navigate(base_url)
     login_page.login("standard_user", "secret_sauce")
@@ -27,7 +27,7 @@ def test_invalid_logins(page: Page, invalid_login_data_from_ai: List[Credentials
     """
     Tests that the application handles various AI-generated invalid login attempts correctly.
     """
-    login_page = LoginPage(page)
+    login_page = SauceDemoLoginPage(page)
     login_page.navigate(base_url)
     
     error_message_locator = page.locator('[data-test="error"]')
