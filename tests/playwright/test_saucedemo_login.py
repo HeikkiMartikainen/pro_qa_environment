@@ -27,7 +27,7 @@ def test_verify_login_with_invalid_credentials(login_page: SauceDemoLoginPage):
     """
     login_page.login("invalid_user", "invalid_password")
     expect(login_page.error_message).to_be_visible()
-    expect(login_page.error_message).to_have_text("Epic sadface: Username and password do not match any user in this service")
+    expect(login_page.error_message).to_have_text(SauceDemoLoginPage.ERROR_INVALID_CREDENTIALS)
 
 def test_verify_login_with_locked_out_user(login_page: SauceDemoLoginPage):
     """
@@ -38,4 +38,4 @@ def test_verify_login_with_locked_out_user(login_page: SauceDemoLoginPage):
         pytest.skip("SAUCEDEMO_PASSWORD environment variable not set")
     login_page.login(SAUCEDEMO_LOCKED_OUT_USER, SAUCEDEMO_PASSWORD)
     expect(login_page.error_message).to_be_visible()
-    expect(login_page.error_message).to_have_text("Epic sadface: Sorry, this user has been locked out.")
+    expect(login_page.error_message).to_have_text(SauceDemoLoginPage.ERROR_LOCKED_OUT_USER)

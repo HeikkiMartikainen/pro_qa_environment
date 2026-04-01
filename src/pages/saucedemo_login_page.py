@@ -5,6 +5,11 @@ class SauceDemoLoginPage(BasePage):
     EXPECTED_TITLE = "Swag Labs"
     URL = "https://www.saucedemo.com/"
 
+    ERROR_INVALID_CREDENTIALS = "Epic sadface: Username and password do not match any user in this service"
+    ERROR_LOCKED_OUT_USER = "Epic sadface: Sorry, this user has been locked out."
+    ERROR_USERNAME_REQUIRED = "Epic sadface: Username is required"
+    ERROR_PASSWORD_REQUIRED = "Epic sadface: Password is required"
+
     def __init__(self, page: Page):
         super().__init__(page)
         self.username_input = page.locator('[data-test="username"]')
